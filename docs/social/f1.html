@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skill F1 Score | superpowers-bench</title>
+    <style>
+      :root {
+        --bg: #d42a1e;
+        --text: #f0ece4;
+        --muted: #8a8490;
+        --border: rgba(255, 255, 255, 0.08);
+        --shadow: 0 28px 60px rgba(0, 0, 0, 0.4);
+        --claude: #e07a3a;
+        --codex: #34d399;
+        --bar-bg: rgba(255, 255, 255, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family:
+          "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
+          Georgia, serif;
+        background: var(--bg);
+      }
+
+      .poster {
+        width: 1000px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .frame {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: #1a1625;
+        backdrop-filter: blur(18px);
+        box-shadow: var(--shadow);
+        padding: 36px 48px 24px;
+        overflow: hidden;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .title {
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 12px;
+      }
+
+      .metric-label {
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        color: var(--muted);
+        margin-bottom: 20px;
+      }
+
+      .lanes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        flex: 1;
+      }
+
+      .lane {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.03);
+        padding: 28px 24px 24px;
+      }
+
+      .lane-header {
+        text-align: center;
+      }
+
+      .lane-label {
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+      }
+
+      .lane-model {
+        color: var(--muted);
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        flex: 1;
+        width: 100%;
+      }
+
+      .column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .col-label {
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .bar-container {
+        height: 340px;
+        width: 100%;
+        max-width: 140px;
+        border-radius: 14px;
+        background: var(--bar-bg);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .bar-fill {
+        width: 100%;
+        height: 0%;
+        border-radius: 14px;
+        transition: height 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .bar-fill.claude {
+        background: linear-gradient(0deg, var(--claude), color-mix(in srgb, var(--claude) 70%, white));
+      }
+
+      .bar-fill.codex {
+        background: linear-gradient(0deg, var(--codex), color-mix(in srgb, var(--codex) 70%, white));
+      }
+
+      .bar-value {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        font-variant-numeric: tabular-nums;
+        opacity: 0;
+        transition: opacity 400ms ease;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .bar-value.visible {
+        opacity: 1;
+      }
+
+      .bar-value.top,
+      .bar-value.inside {
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 16px;
+        color: var(--muted);
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="poster">
+      <section class="frame">
+        <div class="title">Can your agent use the right skills for the right tasks?</div>
+        <div class="metric-label">F1 score of skill invocation across 20 practical tasks</div>
+
+        <section class="lanes">
+          <div class="lane">
+            <div class="lane-header">
+              <div class="lane-label" style="color: var(--claude)">Claude Code</div>
+              <div class="lane-model">opus-4-6</div>
+            </div>
+            <div class="columns">
+              <div class="column">
+                <div class="col-label">no hints</div>
+                <div class="bar-container">
+                  <div class="bar-fill claude" data-target="29"></div>
+                  <div class="bar-value top" data-target="29" style="color: var(--claude)">0%</div>
+                </div>
+              </div>
+              <div class="column">
+                <div class="col-label">with hints</div>
+                <div class="bar-container">
+                  <div class="bar-fill claude" data-target="36"></div>
+                  <div class="bar-value top" data-target="36" style="color: var(--claude)">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lane">
+            <div class="lane-header">
+              <div class="lane-label" style="color: var(--codex)">Codex</div>
+              <div class="lane-model">gpt-5.4</div>
+            </div>
+            <div class="columns">
+              <div class="column">
+                <div class="col-label">no hints</div>
+                <div class="bar-container">
+                  <div class="bar-fill codex" data-target="78"></div>
+                  <div class="bar-value inside" data-target="78" style="color: var(--text)">0%</div>
+                </div>
+              </div>
+              <div class="column">
+                <div class="col-label">with hints</div>
+                <div class="bar-container">
+                  <div class="bar-fill codex" data-target="92"></div>
+                  <div class="bar-value inside" data-target="92" style="color: var(--text)">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer">
+          <span>Skills from obra/superpowers.</span>
+          <span>github.com/kunchenguid/superpowers-bench</span>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const animDelay = 500;
+      const barDuration = 1400;
+      const counterDuration = 1400;
+
+      function animateCounter(el, target, duration) {
+        const start = performance.now();
+        function tick(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target) + "%";
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const captureMode = searchParams.get("capture") === "1";
+
+      if (captureMode) {
+        document.querySelectorAll(".bar-fill").forEach((bar) => {
+          bar.style.transition = "none";
+          bar.style.height = bar.dataset.target + "%";
+        });
+        document.querySelectorAll(".bar-value").forEach((val) => {
+          val.textContent = val.dataset.target + "%";
+          val.classList.add("visible");
+        });
+      } else {
+        setTimeout(() => {
+          // Fill bars
+          document.querySelectorAll(".bar-fill").forEach((bar) => {
+            bar.style.height = bar.dataset.target + "%";
+          });
+
+          // Animate counters
+          document.querySelectorAll(".bar-value").forEach((val) => {
+            val.classList.add("visible");
+            animateCounter(val, parseInt(val.dataset.target), counterDuration);
+          });
+        }, animDelay);
+      }
+    </script>
+  </body>
+</html>

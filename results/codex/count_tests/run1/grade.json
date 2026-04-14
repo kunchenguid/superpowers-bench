@@ -1,0 +1,11 @@
+{
+  "expected": [],
+  "detected": [],
+  "correct": [],
+  "missing": [],
+  "extra": [],
+  "precision": 1,
+  "recall": 1,
+  "f1": 1,
+  "pass": true
+}

@@ -1,0 +1,17 @@
+{
+  "expected": [
+    "requesting-code-review"
+  ],
+  "detected": [
+    "requesting-code-review"
+  ],
+  "correct": [
+    "requesting-code-review"
+  ],
+  "missing": [],
+  "extra": [],
+  "precision": 1,
+  "recall": 1,
+  "f1": 1,
+  "pass": true
+}

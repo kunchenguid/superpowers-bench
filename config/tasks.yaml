@@ -1,0 +1,208 @@
+# Each task has a prompt, expected_skills, and a trigger_hint.
+#
+# trigger_hint is appended to the prompt for "triggered" condition variants.
+# It uses natural language that implies the right workflow WITHOUT naming
+# any skill or saying "invoke the skill." The benchmark measures whether
+# these hints change skill invocation rates.
+#
+# Superpowers skills form dependency chains:
+#   brainstorming -> writing-plans -> TDD -> verification
+# Expected skills reflect what's genuinely beneficial for the task.
+
+tasks:
+  # --- brainstorming (design only) ---
+  design_caching:
+    category: brainstorming
+    expected_skills: [brainstorming, writing-plans]
+    prompt: >
+      Design a caching layer for API responses to reduce external API costs.
+      Consider invalidation strategies, cache storage options, and how it
+      integrates with the existing codebase.
+    trigger_hint: >
+      Let's think through the design options carefully before proposing anything.
+      Once we have a design, break it down into actionable steps.
+
+  design_threading:
+    category: brainstorming
+    expected_skills: [brainstorming, writing-plans]
+    prompt: >
+      We need to support message threading in our application. What approaches
+      should we consider? What are the tradeoffs between different data models
+      for tracking thread relationships?
+    trigger_hint: >
+      Explore the design space and consider tradeoffs before settling on an
+      approach. Then lay out a concrete plan.
+
+  design_plugin_deps:
+    category: brainstorming
+    expected_skills: [brainstorming, writing-plans]
+    prompt: >
+      Design a system for managing dependencies between plugins so they can
+      declare requirements on other plugins and resolve them at startup.
+      Consider circular dependency detection and version constraints.
+    trigger_hint: >
+      There are a lot of tradeoffs here - think through the design carefully
+      before committing. Then produce a step-by-step plan.
+
+  # --- implementation (brainstorm + TDD + verify chain) ---
+  implement_validator:
+    category: tdd
+    expected_skills: [brainstorming, test-driven-development, verification-before-completion]
+    prompt: >
+      Implement a config validator function that checks required fields,
+      validates value types, and returns detailed error messages for each
+      invalid field. Put it in src/config-validator.ts.
+    trigger_hint: >
+      Let's be test-first about this - write the tests before the
+      implementation. And make sure to verify everything actually passes
+      before calling it done.
+
+  implement_retry:
+    category: tdd
+    expected_skills: [brainstorming, test-driven-development, verification-before-completion]
+    prompt: >
+      Implement a retry function with exponential backoff and jitter for failed
+      async operations. It should accept max retries, base delay, and a
+      predicate for retryable errors. Put it in src/retry.ts.
+    trigger_hint: >
+      Write the tests first, then implement just enough to make them pass.
+      Run the full suite at the end to make sure nothing is broken.
+
+  implement_sanitizer:
+    category: tdd
+    expected_skills: [brainstorming, test-driven-development, verification-before-completion]
+    prompt: >
+      Write a utility function that sanitizes user input strings to prevent
+      injection attacks. It should handle HTML entities, script tags, and
+      SQL-like patterns. Put it in src/sanitize.ts.
+    trigger_hint: >
+      Be disciplined - define the expected behavior with tests first, then
+      build the implementation to satisfy them. Verify it all works at the end.
+
+  # --- systematic-debugging ---
+  debug_timeouts:
+    category: debugging
+    expected_skills: [systematic-debugging]
+    prompt: >
+      Users report intermittent timeouts when making API calls through the
+      gateway. The timeouts don't correlate with any specific endpoint and
+      sometimes succeed on retry with identical parameters. Investigate.
+    trigger_hint: >
+      Investigate this methodically. No guessing or quick patches - find the
+      actual root cause before proposing anything.
+
+  debug_memory_leak:
+    category: debugging
+    expected_skills: [systematic-debugging]
+    prompt: >
+      The application's memory usage grows steadily over time and eventually
+      crashes with an out-of-memory error. Heap dumps show increasing numbers
+      of unreferenced event listener objects. Find the root cause.
+    trigger_hint: >
+      Take a systematic approach. Trace the data flow and understand what's
+      really happening before jumping to conclusions.
+
+  debug_flaky_tests:
+    category: debugging
+    expected_skills: [systematic-debugging]
+    prompt: >
+      Several tests fail intermittently in CI but pass locally. The failures
+      seem random across different test files. Investigate the root cause -
+      do not just add retries.
+    trigger_hint: >
+      Don't guess. Reproduce the failure pattern, form hypotheses, and test
+      them one at a time until you find the root cause.
+
+  # --- verification-before-completion ---
+  verify_tests:
+    category: verification
+    expected_skills: [verification-before-completion]
+    prompt: >
+      Run the full test suite and confirm all tests pass. Report the exact
+      test results including pass/fail counts.
+    trigger_hint: >
+      I need actual evidence, not assumptions. Run the real commands and show
+      me the real output.
+
+  verify_build:
+    category: verification
+    expected_skills: [verification-before-completion]
+    prompt: >
+      Verify the TypeScript compilation succeeds with zero errors across all
+      packages. Report the exact compiler output.
+    trigger_hint: >
+      Actually run the build and show me the real results. Don't just say it
+      works - prove it.
+
+  # --- writing-plans ---
+  plan_migration:
+    category: planning
+    expected_skills: [brainstorming, writing-plans]
+    prompt: >
+      We need to migrate our database schema from v1 to v2. The changes include
+      adding 3 new tables, modifying 2 existing columns, and migrating legacy
+      data. Create a detailed implementation plan with tasks sized for 2-5
+      minutes each.
+    trigger_hint: >
+      Think through the approach first, then break it down into bite-sized
+      tasks that someone with no context could follow.
+
+  plan_refactor:
+    category: planning
+    expected_skills: [brainstorming, writing-plans]
+    prompt: >
+      Create a step-by-step implementation plan for refactoring the monolithic
+      gateway module into separate modules for routing, middleware, and error
+      handling. Each task should be independently testable.
+    trigger_hint: >
+      Design the target architecture first, then create a detailed plan we
+      can execute incrementally. Each step should be independently verifiable.
+
+  # --- requesting-code-review ---
+  review_recent:
+    category: review
+    expected_skills: [requesting-code-review]
+    prompt: >
+      Review the changes in the most recent commit for code quality, potential
+      bugs, and adherence to project conventions. Provide actionable feedback.
+    trigger_hint: >
+      Get a fresh pair of eyes on this. Have someone else look at the code
+      who hasn't been staring at it all day.
+
+  # --- dispatching-parallel-agents ---
+  parallel_fixes:
+    category: parallel
+    expected_skills: [dispatching-parallel-agents]
+    prompt: >
+      Fix these three independent issues in parallel:
+      1. The README.md has outdated installation instructions referencing npm
+         instead of pnpm
+      2. The error messages in src/gateway/ use inconsistent formatting - some
+         use template literals, others use string concatenation
+      3. The .gitignore is missing entries for common IDE config files (.idea/,
+         .vscode/settings.json)
+    trigger_hint: >
+      These are completely unrelated problems - there's no reason to work on
+      them sequentially. Handle them all at the same time.
+
+  # --- no skill expected ---
+  explain_code:
+    category: no-skill
+    expected_skills: []
+    prompt: >
+      What does the main entry point of the application do? Walk through the
+      initialization flow and explain the key steps.
+
+  list_structure:
+    category: no-skill
+    expected_skills: []
+    prompt: >
+      List the top-level directory structure of this project and briefly
+      describe what each directory contains.
+
+  count_tests:
+    category: no-skill
+    expected_skills: []
+    prompt: >
+      How many test files are in the project? Count files matching *.test.ts
+      or *.spec.ts patterns and report the total.

@@ -1,0 +1,17 @@
+{
+  "name": "superpowers-bench",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "bench": "tsx src/cli.ts",
+    "fetch-skills": "bash scripts/fetch-skills.sh"
+  },
+  "dependencies": {
+    "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "tsx": "^4.19.4",
+    "@types/node": "^22.15.3"
+  }
+}

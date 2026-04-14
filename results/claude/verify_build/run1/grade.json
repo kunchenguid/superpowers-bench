@@ -1,0 +1,15 @@
+{
+  "expected": [
+    "verification-before-completion"
+  ],
+  "detected": [],
+  "correct": [],
+  "missing": [
+    "verification-before-completion"
+  ],
+  "extra": [],
+  "precision": 1,
+  "recall": 0,
+  "f1": 0,
+  "pass": false
+}

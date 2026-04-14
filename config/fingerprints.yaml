@@ -1,0 +1,41 @@
+# Fingerprint phrases from SKILL.md body content (NOT from frontmatter description).
+# These appear only when the full SKILL.md is loaded into the agent's context,
+# indicating the skill was actually invoked/read.
+#
+# Each skill needs 2-3 phrases that are:
+# 1. Unique to that specific SKILL.md
+# 2. From the body, not the frontmatter (frontmatter descriptions are loaded for all skills)
+# 3. Unlikely to appear naturally in agent output
+
+fingerprints:
+  brainstorming:
+    - "<HARD-GATE>"
+    - "unexamined assumptions cause the most wasted work"
+
+  test-driven-development:
+    - "Violating the letter of the rules is violating the spirit of the rules"
+    - "NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST"
+
+  systematic-debugging:
+    - "NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST"
+    - "Violating the letter of this process is violating the spirit of debugging"
+
+  verification-before-completion:
+    - "NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE"
+    - "Claiming work is complete without verification is dishonesty"
+
+  writing-plans:
+    - "assuming the engineer has zero context for our codebase and questionable taste"
+    - "Assume they don't know good test design very well"
+
+  requesting-code-review:
+    - "Dispatch superpowers:code-reviewer subagent to catch issues before they cascade"
+    - "precisely crafted context for evaluation"
+
+  dispatching-parallel-agents:
+    - "They should never inherit your session's context or history"
+    - "investigating them sequentially wastes time"
+
+  using-superpowers:
+    - "<EXTREMELY-IMPORTANT>"
+    - "1% chance a skill might apply"

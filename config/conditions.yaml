@@ -1,0 +1,24 @@
+conditions:
+  claude:
+    name: "Claude Code baseline"
+    agent: claude
+    model: claude-opus-4-6
+    triggered: false
+
+  claude-triggered:
+    name: "Claude Code with hints"
+    agent: claude
+    model: claude-opus-4-6
+    triggered: true
+
+  codex:
+    name: "Codex baseline"
+    agent: codex
+    model: gpt-5.4
+    triggered: false
+
+  codex-triggered:
+    name: "Codex with hints"
+    agent: codex
+    model: gpt-5.4
+    triggered: true

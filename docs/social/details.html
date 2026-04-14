@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detailed Metrics | superpowers-bench</title>
+    <style>
+      :root {
+        --bg: #d42a1e;
+        --text: #f0ece4;
+        --muted: #8a8490;
+        --border: rgba(255, 255, 255, 0.08);
+        --shadow: 0 28px 60px rgba(0, 0, 0, 0.4);
+        --claude: #e07a3a;
+        --codex: #34d399;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family:
+          "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
+          Georgia, serif;
+        background: var(--bg);
+      }
+
+      .poster {
+        width: 1000px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .frame {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: #1a1625;
+        backdrop-filter: blur(18px);
+        box-shadow: var(--shadow);
+        padding: 36px 48px 24px;
+        overflow: hidden;
+      }
+
+      .title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 8px;
+      }
+
+      .subtitle {
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        color: var(--muted);
+        margin-bottom: 28px;
+      }
+
+      .table-wrapper {
+        margin-bottom: 8px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+      }
+
+      thead th {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0 16px 14px;
+        text-align: right;
+        border-bottom: 1px solid var(--border);
+      }
+
+      thead th:first-child {
+        text-align: left;
+      }
+
+      thead th:nth-child(2) {
+        text-align: left;
+      }
+
+      tbody td {
+        padding: 18px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: right;
+        border-bottom: 1px solid var(--border);
+        font-variant-numeric: tabular-nums;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody td:first-child {
+        text-align: left;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      tbody td:nth-child(2) {
+        text-align: left;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .metric-cell {
+        position: relative;
+      }
+
+      .metric-bar {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: 4px;
+        height: 4px;
+        border-radius: 2px;
+        opacity: 0.35;
+      }
+
+      .metric-value {
+        position: relative;
+        z-index: 1;
+      }
+
+      .agent-claude { color: var(--claude); }
+      .agent-codex { color: var(--codex); }
+      .bar-claude { background: var(--claude); }
+      .bar-codex { background: var(--codex); }
+
+      .best {
+        color: var(--text);
+        font-weight: 800;
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        color: var(--muted);
+        font-family:
+          ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="poster">
+      <section class="frame">
+        <div class="title">Skill invocation - detailed breakdown</div>
+        <div class="subtitle">18 TASKS, 97 RUNS TOTAL</div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Agent</th>
+                <th>Variant</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>F1</th>
+                <th>Perfect Match</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="agent-claude">Claude Code</td>
+                <td>no hints</td>
+                <td class="metric-cell">
+                  <span class="metric-value best">100%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(100% - 16px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">29%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(29% - 5px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">29%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(29% - 5px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">29%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(29% - 5px)"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="agent-claude">Claude Code</td>
+                <td>with hints</td>
+                <td class="metric-cell">
+                  <span class="metric-value best">100%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(100% - 16px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">34%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(34% - 5px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">36%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(36% - 6px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">27%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(27% - 4px)"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="agent-codex">Codex</td>
+                <td>no hints</td>
+                <td class="metric-cell">
+                  <span class="metric-value">83%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(83% - 13px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">86%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(86% - 14px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">78%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(78% - 12px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">46%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(46% - 7px)"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="agent-codex">Codex</td>
+                <td>with hints</td>
+                <td class="metric-cell">
+                  <span class="metric-value">90%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(90% - 14px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value best">99%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(99% - 16px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value best">92%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(92% - 15px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value best">78%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(78% - 12px)"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="footer">
+          <span>Skills from obra/superpowers.</span>
+          <span>github.com/kunchenguid/superpowers-bench</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
