@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "bench": "tsx src/cli.ts",
-    "fetch-skills": "bash scripts/fetch-skills.sh"
+    "fetch-skills": "bash scripts/fetch-skills.sh",
+    "render-social": "tsx scripts/render-social.ts docs/social/f1.html docs/social/details.html",
+    "test": "npx tsx --test test/**/*.test.ts"
   },
   "dependencies": {
     "yaml": "^2.7.1"

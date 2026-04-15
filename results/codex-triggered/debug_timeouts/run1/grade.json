@@ -4,6 +4,7 @@
   ],
   "detected": [
     "systematic-debugging",
+    "verification-before-completion",
     "writing-plans"
   ],
   "correct": [
@@ -11,10 +12,11 @@
   ],
   "missing": [],
   "extra": [
+    "verification-before-completion",
     "writing-plans"
   ],
-  "precision": 0.5,
+  "precision": 0.3333333333333333,
   "recall": 1,
-  "f1": 0.6666666666666666,
+  "f1": 0.5,
   "pass": false
 }

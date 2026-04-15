@@ -1,0 +1,19 @@
+{
+  "expected": [
+    "requesting-code-review"
+  ],
+  "detected": [
+    "dispatching-parallel-agents"
+  ],
+  "correct": [],
+  "missing": [
+    "requesting-code-review"
+  ],
+  "extra": [
+    "dispatching-parallel-agents"
+  ],
+  "precision": 0,
+  "recall": 0,
+  "f1": 0,
+  "pass": false
+}

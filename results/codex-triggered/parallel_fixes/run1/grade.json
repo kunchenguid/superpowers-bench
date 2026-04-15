@@ -3,11 +3,7 @@
     "dispatching-parallel-agents"
   ],
   "detected": [
-    "brainstorming",
     "test-driven-development",
-    "verification-before-completion",
-    "writing-plans",
-    "requesting-code-review",
     "dispatching-parallel-agents"
   ],
   "correct": [
@@ -15,14 +11,10 @@
   ],
   "missing": [],
   "extra": [
-    "brainstorming",
-    "test-driven-development",
-    "verification-before-completion",
-    "writing-plans",
-    "requesting-code-review"
+    "test-driven-development"
   ],
-  "precision": 0.16666666666666666,
+  "precision": 0.5,
   "recall": 1,
-  "f1": 0.2857142857142857,
+  "f1": 0.6666666666666666,
   "pass": false
 }

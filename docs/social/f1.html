@@ -12,6 +12,7 @@
         --border: rgba(255, 255, 255, 0.08);
         --shadow: 0 28px 60px rgba(0, 0, 0, 0.4);
         --claude: #e07a3a;
+        --opencode: #60a5fa;
         --codex: #34d399;
         --bar-bg: rgba(255, 255, 255, 0.06);
       }
@@ -29,6 +30,7 @@
           "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
           Georgia, serif;
         background: var(--bg);
+        width: 1000px;
       }
 
       .poster {
@@ -39,7 +41,6 @@
       }
 
       .frame {
-        flex: 1;
         display: flex;
         flex-direction: column;
         border-radius: 24px;
@@ -47,7 +48,7 @@
         background: #1a1625;
         backdrop-filter: blur(18px);
         box-shadow: var(--shadow);
-        padding: 36px 48px 24px;
+        padding: 32px 36px 24px;
         overflow: hidden;
       }
 
@@ -79,25 +80,25 @@
         font-weight: 700;
         letter-spacing: 0.16em;
         color: var(--muted);
-        margin-bottom: 20px;
+        margin-bottom: 18px;
       }
 
       .lanes {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 28px;
-        flex: 1;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
       }
 
       .lane {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 28px;
+        justify-content: space-between;
+        gap: 20px;
         border-radius: 20px;
         border: 1px solid var(--border);
         background: rgba(255, 255, 255, 0.03);
-        padding: 28px 24px 24px;
+        padding: 24px 18px 20px;
       }
 
       .lane-header {
@@ -108,7 +109,7 @@
         font-family:
           ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
           monospace;
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 800;
         letter-spacing: -0.04em;
       }
@@ -118,23 +119,25 @@
         font-family:
           ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
           monospace;
-        font-size: 12px;
+        font-size: 11px;
         margin-top: 4px;
       }
 
       .columns {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        display: flex;
+        gap: 14px;
         flex: 1;
         width: 100%;
+        align-items: stretch;
       }
 
       .column {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 12px;
+        justify-content: flex-end;
+        gap: 10px;
+        flex: 1;
       }
 
       .col-label {
@@ -149,9 +152,11 @@
       }
 
       .bar-container {
-        height: 340px;
+        height: auto;
+        flex: 1;
+        min-height: 420px;
         width: 100%;
-        max-width: 140px;
+        max-width: 120px;
         border-radius: 14px;
         background: var(--bar-bg);
         position: relative;
@@ -165,7 +170,6 @@
         width: 100%;
         height: 0%;
         border-radius: 14px;
-        transition: height 1400ms cubic-bezier(0.22, 1, 0.36, 1);
       }
 
       .bar-fill.claude {
@@ -174,6 +178,10 @@
 
       .bar-fill.codex {
         background: linear-gradient(0deg, var(--codex), color-mix(in srgb, var(--codex) 70%, white));
+      }
+
+      .bar-fill.opencode {
+        background: linear-gradient(0deg, var(--opencode), color-mix(in srgb, var(--opencode) 70%, white));
       }
 
       .bar-value {
@@ -187,13 +195,8 @@
         font-weight: 800;
         letter-spacing: -0.06em;
         font-variant-numeric: tabular-nums;
-        opacity: 0;
-        transition: opacity 400ms ease;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-      }
-
-      .bar-value.visible {
         opacity: 1;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
       }
 
       .bar-value.top,
@@ -218,7 +221,7 @@
     <main class="poster">
       <section class="frame">
         <div class="title">Can your agent use the right skills for the right tasks?</div>
-        <div class="metric-label">F1 score of skill invocation across 20 practical tasks</div>
+        <div class="metric-label">F1 score of skill invocation across 18 practical tasks</div>
 
         <section class="lanes">
           <div class="lane">
@@ -230,15 +233,38 @@
               <div class="column">
                 <div class="col-label">no hints</div>
                 <div class="bar-container">
-                  <div class="bar-fill claude" data-target="29"></div>
-                  <div class="bar-value top" data-target="29" style="color: var(--claude)">0%</div>
+                  <div class="bar-fill claude" style="height: 40%"></div>
+                  <div class="bar-value top" style="color: var(--claude)">40%</div>
                 </div>
               </div>
               <div class="column">
                 <div class="col-label">with hints</div>
                 <div class="bar-container">
-                  <div class="bar-fill claude" data-target="36"></div>
-                  <div class="bar-value top" data-target="36" style="color: var(--claude)">0%</div>
+                  <div class="bar-fill claude" style="height: 43%"></div>
+                  <div class="bar-value top" style="color: var(--claude)">43%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lane">
+            <div class="lane-header">
+              <div class="lane-label" style="color: var(--opencode)">OpenCode</div>
+              <div class="lane-model">gpt-5.4</div>
+            </div>
+            <div class="columns">
+              <div class="column">
+                <div class="col-label">no hints</div>
+                <div class="bar-container">
+                  <div class="bar-fill opencode" style="height: 74%"></div>
+                  <div class="bar-value inside" style="color: var(--text)">74%</div>
+                </div>
+              </div>
+              <div class="column">
+                <div class="col-label">with hints</div>
+                <div class="bar-container">
+                  <div class="bar-fill opencode" style="height: 82%"></div>
+                  <div class="bar-value inside" style="color: var(--text)">82%</div>
                 </div>
               </div>
             </div>
@@ -253,15 +279,15 @@
               <div class="column">
                 <div class="col-label">no hints</div>
                 <div class="bar-container">
-                  <div class="bar-fill codex" data-target="78"></div>
-                  <div class="bar-value inside" data-target="78" style="color: var(--text)">0%</div>
+                  <div class="bar-fill codex" style="height: 83%"></div>
+                  <div class="bar-value inside" style="color: var(--text)">83%</div>
                 </div>
               </div>
               <div class="column">
                 <div class="col-label">with hints</div>
                 <div class="bar-container">
-                  <div class="bar-fill codex" data-target="92"></div>
-                  <div class="bar-value inside" data-target="92" style="color: var(--text)">0%</div>
+                  <div class="bar-fill codex" style="height: 92%"></div>
+                  <div class="bar-value inside" style="color: var(--text)">92%</div>
                 </div>
               </div>
             </div>
@@ -275,49 +301,5 @@
       </section>
     </main>
 
-    <script>
-      const animDelay = 500;
-      const barDuration = 1400;
-      const counterDuration = 1400;
-
-      function animateCounter(el, target, duration) {
-        const start = performance.now();
-        function tick(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          el.textContent = Math.round(eased * target) + "%";
-          if (progress < 1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      }
-
-      const searchParams = new URLSearchParams(window.location.search);
-      const captureMode = searchParams.get("capture") === "1";
-
-      if (captureMode) {
-        document.querySelectorAll(".bar-fill").forEach((bar) => {
-          bar.style.transition = "none";
-          bar.style.height = bar.dataset.target + "%";
-        });
-        document.querySelectorAll(".bar-value").forEach((val) => {
-          val.textContent = val.dataset.target + "%";
-          val.classList.add("visible");
-        });
-      } else {
-        setTimeout(() => {
-          // Fill bars
-          document.querySelectorAll(".bar-fill").forEach((bar) => {
-            bar.style.height = bar.dataset.target + "%";
-          });
-
-          // Animate counters
-          document.querySelectorAll(".bar-value").forEach((val) => {
-            val.classList.add("visible");
-            animateCounter(val, parseInt(val.dataset.target), counterDuration);
-          });
-        }, animDelay);
-      }
-    </script>
   </body>
 </html>

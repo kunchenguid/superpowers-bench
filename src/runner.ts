@@ -12,6 +12,7 @@
  * Multi-turn auto-responder:
  * - Claude: uses --resume <session_id> to continue conversations
  * - Codex: re-invokes with augmented prompt including previous context
+ * - OpenCode: uses --session <session_id> to continue conversations
  */
 
 import {
@@ -197,12 +198,55 @@ function extractCodexMessages(jsonl: string): string[] {
   return messages;
 }
 
-// ── Isolated HOME for Codex ──────────────────────────────────────────
+export function detectOpenCodeQuestion(jsonl: string): string | null {
+  let lastText = "";
+  let finalAnswer = "";
 
-function createIsolatedHome(): string {
-  const benchHome = join(tmpdir(), `superpowers-bench-${Date.now()}`);
+  for (const line of jsonl.split("\n")) {
+    if (!line.trim()) continue;
+    try {
+      const obj = JSON.parse(line) as Record<string, unknown>;
+      if (obj.type !== "text") continue;
+      const part = obj.part as {
+        type?: string;
+        text?: string;
+        metadata?: { openai?: { phase?: string } };
+      } | undefined;
+      if (part?.type !== "text" || typeof part.text !== "string") continue;
+      lastText = part.text;
+      if (part.metadata?.openai?.phase === "final_answer") {
+        finalAnswer = part.text;
+      }
+    } catch {
+      // skip
+    }
+  }
+
+  const candidate = (finalAnswer || lastText).trim();
+  if (candidate.endsWith("?") && candidate.length > 20) return candidate;
+  return null;
+}
+
+export function extractOpenCodeSessionId(jsonl: string): string | null {
+  for (const line of jsonl.split("\n")) {
+    if (!line.trim()) continue;
+    try {
+      const obj = JSON.parse(line) as Record<string, unknown>;
+      if (obj.type === "step_start" && typeof obj.sessionID === "string") {
+        return obj.sessionID;
+      }
+    } catch {
+      // skip
+    }
+  }
+  return null;
+}
+
+// ── Isolated HOME for CLI agents ─────────────────────────────────────
+
+function createIsolatedHome(agent: "codex" | "opencode"): string {
+  const benchHome = join(tmpdir(), `superpowers-bench-${agent}-${Date.now()}`);
   mkdirSync(benchHome, { recursive: true });
-  mkdirSync(join(benchHome, ".codex"), { recursive: true });
 
   const realHome = process.env.HOME!;
 
@@ -212,20 +256,46 @@ function createIsolatedHome(): string {
     if (existsSync(src)) copyFileSync(src, join(benchHome, file));
   }
 
-  // Copy codex credentials
-  const codexDir = join(realHome, ".codex");
-  if (existsSync(codexDir)) {
-    for (const file of readdirSync(codexDir)) {
-      if (file.startsWith("auth") || file === "config.toml") {
-        const src = join(codexDir, file);
-        if (statSync(src).isFile()) {
-          copyFileSync(src, join(benchHome, ".codex", file));
+  if (agent === "codex") {
+    mkdirSync(join(benchHome, ".codex"), { recursive: true });
+
+    const codexDir = join(realHome, ".codex");
+    if (existsSync(codexDir)) {
+      for (const file of readdirSync(codexDir)) {
+        if (file.startsWith("auth") || file === "config.toml") {
+          const src = join(codexDir, file);
+          if (statSync(src).isFile()) {
+            copyFileSync(src, join(benchHome, ".codex", file));
+          }
         }
       }
     }
+
+    return benchHome;
+  }
+
+  const configHome = join(benchHome, ".config", "opencode");
+  const dataHome = join(benchHome, ".local", "share", "opencode");
+  const stateHome = join(benchHome, ".local", "state", "opencode");
+  mkdirSync(configHome, { recursive: true });
+  mkdirSync(dataHome, { recursive: true });
+  mkdirSync(stateHome, { recursive: true });
+
+  const authSrc = join(realHome, ".local", "share", "opencode", "auth.json");
+  if (existsSync(authSrc)) {
+    copyFileSync(authSrc, join(dataHome, "auth.json"));
   }
 
   return benchHome;
+}
+
+export function buildOpenCodeEnv(isolatedHome: string): Record<string, string> {
+  return {
+    HOME: isolatedHome,
+    XDG_CONFIG_HOME: join(isolatedHome, ".config"),
+    XDG_DATA_HOME: join(isolatedHome, ".local", "share"),
+    XDG_STATE_HOME: join(isolatedHome, ".local", "state"),
+  };
 }
 
 // ── Agent execution ──────────────────────────────────────────────────
@@ -376,6 +446,60 @@ function runCodexMultiTurn(
   return { jsonl: allJsonl, autoResponses };
 }
 
+function runOpenCodeMultiTurn(
+  prompt: string,
+  workspaceDir: string,
+  model: string,
+  isolatedHome: string,
+): { jsonl: string; autoResponses: number } {
+  let allJsonl = "";
+  let sessionId: string | null = null;
+  let autoResponses = 0;
+  const env = buildOpenCodeEnv(isolatedHome);
+
+  for (let turn = 0; turn <= MAX_AUTO_RESPONSES; turn++) {
+    let cmd: string[];
+
+    if (turn === 0) {
+      cmd = [
+        "opencode",
+        "run",
+        "--format", "json",
+        "--agent", "build",
+        "--model", model,
+        "--dir", workspaceDir,
+        "--pure",
+        JSON.stringify(prompt),
+      ];
+    } else {
+      cmd = [
+        "opencode",
+        "run",
+        "--format", "json",
+        "--session", sessionId!,
+        "--dir", workspaceDir,
+        "--pure",
+        JSON.stringify(AUTO_RESPONSE),
+      ];
+    }
+
+    const output = execAgent(cmd, workspaceDir, env);
+    allJsonl += output + "\n";
+
+    if (turn === 0) {
+      sessionId = extractOpenCodeSessionId(output);
+    }
+
+    const question = detectOpenCodeQuestion(output);
+    if (!question || !sessionId) break;
+
+    autoResponses++;
+    console.log(`    Auto-responding to OpenCode (turn ${turn + 1}): "${question.slice(0, 80)}..."`);
+  }
+
+  return { jsonl: allJsonl, autoResponses };
+}
+
 // ── Main entry point ─────────────────────────────────────────────────
 
 export function runOne(
@@ -407,10 +531,22 @@ export function runOne(
 
   if (condition.agent === "claude") {
     ({ jsonl, autoResponses } = runClaudeMultiTurn(effectivePrompt, workspaceDir, condition.model));
-  } else {
-    const isolatedHome = createIsolatedHome();
+  } else if (condition.agent === "codex") {
+    const isolatedHome = createIsolatedHome("codex");
     try {
       ({ jsonl, autoResponses } = runCodexMultiTurn(
+        effectivePrompt,
+        workspaceDir,
+        condition.model,
+        isolatedHome,
+      ));
+    } finally {
+      rmSync(isolatedHome, { recursive: true, force: true });
+    }
+  } else {
+    const isolatedHome = createIsolatedHome("opencode");
+    try {
+      ({ jsonl, autoResponses } = runOpenCodeMultiTurn(
         effectivePrompt,
         workspaceDir,
         condition.model,

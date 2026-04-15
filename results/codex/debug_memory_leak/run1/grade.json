@@ -3,18 +3,15 @@
     "systematic-debugging"
   ],
   "detected": [
-    "systematic-debugging",
-    "writing-plans"
+    "systematic-debugging"
   ],
   "correct": [
     "systematic-debugging"
   ],
   "missing": [],
-  "extra": [
-    "writing-plans"
-  ],
-  "precision": 0.5,
+  "extra": [],
+  "precision": 1,
   "recall": 1,
-  "f1": 0.6666666666666666,
-  "pass": false
+  "f1": 1,
+  "pass": true
 }

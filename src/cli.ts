@@ -14,7 +14,12 @@ import { join } from "node:path";
 import { loadConfig, RESULTS_DIR, BENCH_ROOT } from "./config.js";
 import { runOne, ensureWorkspaces } from "./runner.js";
 import { generateReport } from "./reporter.js";
+import { retryRun, type RetryRunResult } from "./retry.js";
+import { prepareResultsDir, shouldResetResultsForRun } from "./results.js";
 import type { RunSpec, ConditionDef, TaskDef } from "./types.js";
+
+const CHILD_RUN_TIMEOUT_MS = 15 * 60 * 1000;
+const CHILD_RUN_MAX_RETRIES = 1;
 
 function parseArgs(args: string[]): Record<string, string> {
   const result: Record<string, string> = {};
@@ -38,7 +43,7 @@ Commands:
   report   Generate results report
 
 Options:
-  --condition <id>   Filter to specific condition (claude, codex, etc.)
+  --condition <id>   Filter to specific condition (claude, codex, opencode-gpt-5-4, etc.)
   --task <id>        Filter to specific task
   --repeat <n>       Number of repeats per combination (default: 1)
   --parallel <n>     Max concurrent runs for matrix (default: 4)
@@ -48,6 +53,7 @@ Examples:
   npm run bench -- run --condition claude --task implement_validator
   npm run bench -- matrix --parallel 4
   npm run bench -- matrix --condition codex --parallel 2
+  npm run bench -- run --condition opencode-gpt-5-4 --task explain_code
   npm run bench -- report
 `);
 }
@@ -99,7 +105,11 @@ function runCmd(args: Record<string, string>): void {
     process.exit(1);
   }
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  if (shouldResetResultsForRun(args["worker-id"])) {
+    prepareResultsDir(RESULTS_DIR);
+  } else {
+    mkdirSync(RESULTS_DIR, { recursive: true });
+  }
 
   for (let run = 1; run <= repeat; run++) {
     console.log(`\n[${conditionId}] ${taskId} (run ${run}/${repeat})`);
@@ -124,7 +134,11 @@ interface Combo {
   run: number;
 }
 
-function spawnRun(combo: Combo, workerId: number): Promise<{ combo: Combo; exitCode: number }> {
+interface SpawnRunResult extends RetryRunResult {
+  combo: Combo;
+}
+
+function spawnRunOnce(combo: Combo, workerId: number, attempt: number): Promise<SpawnRunResult> {
   return new Promise((resolve) => {
     const child = spawn(
       "npx",
@@ -138,22 +152,66 @@ function spawnRun(combo: Combo, workerId: number): Promise<{ combo: Combo; exitC
         cwd: BENCH_ROOT,
         stdio: ["pipe", "pipe", "pipe"],
         env: process.env,
+        detached: true,
       },
     );
 
     let stdout = "";
+    let settled = false;
     child.stdout.on("data", (data: Buffer) => { stdout += data.toString(); });
     child.stderr.on("data", (data: Buffer) => { stdout += data.toString(); });
 
-    child.on("close", (code) => {
-      // Print the child's output with worker tag
+    const finish = (exitCode: number, timedOut: boolean) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
+
       const lines = stdout.trim().split("\n").filter(Boolean);
       for (const line of lines) {
         console.log(`  [w${workerId}] ${line.trim()}`);
       }
-      resolve({ combo, exitCode: code ?? 1 });
+      if (timedOut) {
+        console.log(
+          `  [w${workerId}] timed out after ${Math.round(CHILD_RUN_TIMEOUT_MS / 60000)} minutes ` +
+          `(attempt ${attempt})`,
+        );
+      }
+
+      resolve({ combo, exitCode, timedOut, attempt });
+    };
+
+    const timeoutId = setTimeout(() => {
+      try {
+        if (child.pid) {
+          process.kill(-child.pid, "SIGKILL");
+        } else {
+          child.kill("SIGKILL");
+        }
+      } catch {
+        child.kill("SIGKILL");
+      }
+      finish(124, true);
+    }, CHILD_RUN_TIMEOUT_MS);
+
+    child.on("error", () => {
+      finish(1, false);
+    });
+
+    child.on("close", (code) => {
+      finish(code ?? 1, false);
     });
   });
+}
+
+function spawnRun(combo: Combo, workerId: number): Promise<SpawnRunResult> {
+  return retryRun(
+    (attempt) => spawnRunOnce(combo, workerId, attempt),
+    CHILD_RUN_MAX_RETRIES,
+    (result) => {
+      const reason = result.timedOut ? "timeout" : `exit ${result.exitCode}`;
+      console.log(`  [w${workerId}] retrying after ${reason} (attempt ${result.attempt})`);
+    },
+  );
 }
 
 async function matrixCmd(args: Record<string, string>): Promise<void> {
@@ -175,7 +233,7 @@ async function matrixCmd(args: Record<string, string>): Promise<void> {
     process.exit(1);
   }
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  prepareResultsDir(RESULTS_DIR);
 
   // Build and shuffle combo list
   const combos: Combo[] = [];

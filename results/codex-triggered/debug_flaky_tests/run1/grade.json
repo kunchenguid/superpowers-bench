@@ -3,15 +3,15 @@
     "systematic-debugging"
   ],
   "detected": [
-    "test-driven-development",
-    "systematic-debugging"
+    "systematic-debugging",
+    "verification-before-completion"
   ],
   "correct": [
     "systematic-debugging"
   ],
   "missing": [],
   "extra": [
-    "test-driven-development"
+    "verification-before-completion"
   ],
   "precision": 0.5,
   "recall": 1,

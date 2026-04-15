@@ -3,18 +3,15 @@
     "requesting-code-review"
   ],
   "detected": [
-    "verification-before-completion",
     "requesting-code-review"
   ],
   "correct": [
     "requesting-code-review"
   ],
   "missing": [],
-  "extra": [
-    "verification-before-completion"
-  ],
-  "precision": 0.5,
+  "extra": [],
+  "precision": 1,
   "recall": 1,
-  "f1": 0.6666666666666666,
-  "pass": false
+  "f1": 1,
+  "pass": true
 }

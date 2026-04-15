@@ -31,6 +31,28 @@ function pct(n: number): string {
   return `${(n * 100).toFixed(0)}%`;
 }
 
+export function groupByConditionFamily(results: RunResult[]): Map<string, { baseline: RunResult[]; triggered: RunResult[] }> {
+  const groups = new Map<string, { baseline: RunResult[]; triggered: RunResult[] }>();
+
+  for (const result of results) {
+    const family = result.condition.endsWith("-triggered")
+      ? result.condition.slice(0, -"-triggered".length)
+      : result.condition;
+
+    if (!groups.has(family)) {
+      groups.set(family, { baseline: [], triggered: [] });
+    }
+
+    if (result.condition.endsWith("-triggered")) {
+      groups.get(family)!.triggered.push(result);
+    } else {
+      groups.get(family)!.baseline.push(result);
+    }
+  }
+
+  return groups;
+}
+
 export function generateReport(): string {
   const results = loadResults();
   if (results.length === 0) return "No results found.";
@@ -62,33 +84,29 @@ export function generateReport(): string {
 
   // ── Baseline vs triggered comparison ───────────────────────────────
 
-  const agents = [...new Set(results.map((r) => r.agent))];
-  const hasTriggered = conditionIds.some((c) => c.endsWith("-triggered"));
+    const conditionFamilies = groupByConditionFamily(results);
+    const hasTriggered = conditionIds.some((c) => c.endsWith("-triggered"));
 
   if (hasTriggered) {
     lines.push("## Baseline vs Triggered");
     lines.push("");
-    lines.push("| Agent | Variant | Runs | Pass% | Precision | Recall | F1 |");
+    lines.push("| Condition | Variant | Runs | Pass% | Precision | Recall | F1 |");
     lines.push("|-------|---------|------|-------|-----------|--------|-----|");
 
-    for (const agent of agents) {
-      const baseline = results.filter(
-        (r) => r.agent === agent && !r.condition.endsWith("-triggered"),
-      );
-      const triggered = results.filter(
-        (r) => r.agent === agent && r.condition.endsWith("-triggered"),
-      );
+    for (const [family, variants] of conditionFamilies) {
+      const baseline = variants.baseline;
+      const triggered = variants.triggered;
 
       if (baseline.length > 0) {
         const s = summarize(baseline);
         lines.push(
-          `| ${agent} | baseline | ${s.runs} | ${pct(s.pass_rate)} | ${pct(s.avg_precision)} | ${pct(s.avg_recall)} | ${pct(s.avg_f1)} |`,
+          `| ${family} | baseline | ${s.runs} | ${pct(s.pass_rate)} | ${pct(s.avg_precision)} | ${pct(s.avg_recall)} | ${pct(s.avg_f1)} |`,
         );
       }
       if (triggered.length > 0) {
         const s = summarize(triggered);
         lines.push(
-          `| ${agent} | triggered | ${s.runs} | ${pct(s.pass_rate)} | ${pct(s.avg_precision)} | ${pct(s.avg_recall)} | ${pct(s.avg_f1)} |`,
+          `| ${family} | triggered | ${s.runs} | ${pct(s.pass_rate)} | ${pct(s.avg_precision)} | ${pct(s.avg_recall)} | ${pct(s.avg_f1)} |`,
         );
       }
     }
