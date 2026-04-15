@@ -55,7 +55,7 @@ export function detectCodexSkills(jsonl: string, fingerprints: SkillFingerprints
  */
 export function detectSkills(
   jsonl: string,
-  agent: "claude" | "codex",
+  agent: "claude" | "codex" | "opencode",
   fingerprints: SkillFingerprints,
 ): string[] {
   if (agent === "claude") {

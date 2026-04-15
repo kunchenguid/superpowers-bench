@@ -1,0 +1,25 @@
+{
+  "expected": [
+    "brainstorming",
+    "writing-plans"
+  ],
+  "detected": [
+    "brainstorming",
+    "test-driven-development",
+    "verification-before-completion",
+    "writing-plans"
+  ],
+  "correct": [
+    "brainstorming",
+    "writing-plans"
+  ],
+  "missing": [],
+  "extra": [
+    "test-driven-development",
+    "verification-before-completion"
+  ],
+  "precision": 0.5,
+  "recall": 1,
+  "f1": 0.6666666666666666,
+  "pass": false
+}

@@ -1,0 +1,20 @@
+{
+  "expected": [
+    "dispatching-parallel-agents"
+  ],
+  "detected": [
+    "brainstorming",
+    "dispatching-parallel-agents"
+  ],
+  "correct": [
+    "dispatching-parallel-agents"
+  ],
+  "missing": [],
+  "extra": [
+    "brainstorming"
+  ],
+  "precision": 0.5,
+  "recall": 1,
+  "f1": 0.6666666666666666,
+  "pass": false
+}

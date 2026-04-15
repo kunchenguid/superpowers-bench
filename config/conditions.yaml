@@ -22,3 +22,15 @@ conditions:
     agent: codex
     model: gpt-5.4
     triggered: true
+
+  opencode-gpt-5-4:
+    name: "OpenCode baseline"
+    agent: opencode
+    model: openai/gpt-5.4
+    triggered: false
+
+  opencode-gpt-5-4-triggered:
+    name: "OpenCode with hints"
+    agent: opencode
+    model: openai/gpt-5.4
+    triggered: true

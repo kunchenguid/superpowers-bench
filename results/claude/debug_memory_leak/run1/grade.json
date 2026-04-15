@@ -2,14 +2,16 @@
   "expected": [
     "systematic-debugging"
   ],
-  "detected": [],
-  "correct": [],
-  "missing": [
+  "detected": [
     "systematic-debugging"
   ],
+  "correct": [
+    "systematic-debugging"
+  ],
+  "missing": [],
   "extra": [],
   "precision": 1,
-  "recall": 0,
-  "f1": 0,
-  "pass": false
+  "recall": 1,
+  "f1": 1,
+  "pass": true
 }

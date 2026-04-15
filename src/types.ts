@@ -1,4 +1,4 @@
-export type AgentBackend = "claude" | "codex";
+export type AgentBackend = "claude" | "codex" | "opencode";
 
 export interface ConditionDef {
   id: string;

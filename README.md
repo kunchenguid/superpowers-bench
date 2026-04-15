@@ -16,7 +16,7 @@
 
 You give your agent a set of skills. You describe a task. Does it figure out which skills to use - or does it need hand-holding?
 
-superpowers-bench measures how well coding agents (Claude Code, Codex) discover and invoke skills from [obra/superpowers](https://github.com/obra/superpowers) based on context alone.
+superpowers-bench measures how well coding agents (Claude Code, Codex, OpenCode) discover and invoke skills from [obra/superpowers](https://github.com/obra/superpowers) based on context alone.
 It tests two conditions: **no hints** (just the task prompt) and **with hints** (task prompt + a natural-language hint that implies the right workflow without naming it).
 
 <p align="center">
@@ -50,7 +50,7 @@ npm install
 npm run fetch-skills
 ```
 
-**Prerequisites**: Node.js 16+, and either `claude` (Claude Code CLI) or `codex` (OpenAI Codex CLI) on your PATH with valid API credentials.
+**Prerequisites**: Node.js 16+, and at least one supported agent CLI on your PATH with valid API credentials: `claude` (Claude Code CLI), `codex` (OpenAI Codex CLI), or `opencode` (OpenCode CLI).
 
 ## How It Works
 
@@ -78,7 +78,7 @@ npm run fetch-skills
 ```
 
 - **Isolated workspaces** - each parallel worker gets its own git copy of the target repo to prevent interference
-- **Detection method** - Claude: parsed from `Skill` tool_use events. Codex: fingerprint matching against distinctive phrases from skill bodies
+- **Detection method** - Claude: parsed from `Skill` tool_use events. Codex/OpenCode: fingerprint matching against distinctive phrases from skill bodies
 - **Grading** - set comparison between detected and expected skills. Pass = no missing, no extra
 
 ## CLI Reference
@@ -89,6 +89,8 @@ npm run fetch-skills
 | `npm run bench matrix` | Run full benchmark matrix across all combos   |
 | `npm run bench report` | Generate markdown report from results.jsonl   |
 | `npm run fetch-skills` | Download skill definitions from superpowers   |
+
+`run` and `matrix` start from a fresh `results/` directory. `report` always reflects the latest benchmark batch, not an append-only history.
 
 ### Flags
 
@@ -108,7 +110,7 @@ All config lives in `config/`:
 
 - **`conditions.yaml`** - defines agent variants (agent, model, triggered flag)
 - **`tasks.yaml`** - 20 tasks with prompts, expected skills, and trigger hints
-- **`fingerprints.yaml`** - distinctive phrases for Codex skill detection
+- **`fingerprints.yaml`** - distinctive phrases for Codex/OpenCode skill detection
 
 ### Conditions
 
@@ -118,6 +120,8 @@ All config lives in `config/`:
 | `claude-triggered` | Claude | claude-opus-4-6 | yes       |
 | `codex`            | Codex  | gpt-5.4         | no        |
 | `codex-triggered`  | Codex  | gpt-5.4         | yes       |
+| `opencode-gpt-5-4` | OpenCode | openai/gpt-5.4 | no      |
+| `opencode-gpt-5-4-triggered` | OpenCode | openai/gpt-5.4 | yes   |
 
 ## Development
 

@@ -12,6 +12,7 @@
         --border: rgba(255, 255, 255, 0.08);
         --shadow: 0 28px 60px rgba(0, 0, 0, 0.4);
         --claude: #e07a3a;
+        --opencode: #60a5fa;
         --codex: #34d399;
       }
 
@@ -28,6 +29,7 @@
           "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino,
           Georgia, serif;
         background: var(--bg);
+        width: 1000px;
       }
 
       .poster {
@@ -46,7 +48,7 @@
         background: #1a1625;
         backdrop-filter: blur(18px);
         box-shadow: var(--shadow);
-        padding: 36px 48px 24px;
+        padding: 32px 36px 24px;
         overflow: hidden;
       }
 
@@ -66,15 +68,18 @@
         font-weight: 700;
         letter-spacing: 0.16em;
         color: var(--muted);
-        margin-bottom: 28px;
+        margin-bottom: 20px;
       }
 
       .table-wrapper {
+        display: flex;
+        justify-content: center;
         margin-bottom: 8px;
       }
 
       table {
-        width: 100%;
+        width: 90%;
+        table-layout: fixed;
         border-collapse: separate;
         border-spacing: 0;
         font-family:
@@ -88,9 +93,13 @@
         letter-spacing: 0.12em;
         text-transform: uppercase;
         color: var(--muted);
-        padding: 0 16px 14px;
+        padding: 0 16px 18px;
         text-align: right;
         border-bottom: 1px solid var(--border);
+      }
+
+      tbody tr {
+        height: 76px;
       }
 
       thead th:first-child {
@@ -102,8 +111,8 @@
       }
 
       tbody td {
-        padding: 18px 16px;
-        font-size: 16px;
+        padding: 12px 14px;
+        font-size: 15px;
         font-weight: 600;
         text-align: right;
         border-bottom: 1px solid var(--border);
@@ -116,9 +125,20 @@
 
       tbody td:first-child {
         text-align: left;
-        font-size: 20px;
+      }
+
+      .agent-name {
+        font-size: 18px;
         font-weight: 800;
         letter-spacing: -0.03em;
+      }
+
+      .agent-model {
+        margin-top: 2px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: var(--muted);
       }
 
       tbody td:nth-child(2) {
@@ -148,8 +168,10 @@
       }
 
       .agent-claude { color: var(--claude); }
+      .agent-opencode { color: var(--opencode); }
       .agent-codex { color: var(--codex); }
       .bar-claude { background: var(--claude); }
+      .bar-opencode { background: var(--opencode); }
       .bar-codex { background: var(--codex); }
 
       .best {
@@ -173,10 +195,18 @@
     <main class="poster">
       <section class="frame">
         <div class="title">Skill invocation - detailed breakdown</div>
-        <div class="subtitle">18 TASKS, 97 RUNS TOTAL</div>
+        <div class="subtitle">18 TASKS, 108 RUNS TOTAL</div>
 
         <div class="table-wrapper">
           <table>
+            <colgroup>
+              <col style="width: 24%" />
+              <col style="width: 16%" />
+              <col style="width: 15%" />
+              <col style="width: 12%" />
+              <col style="width: 10%" />
+              <col style="width: 23%" />
+            </colgroup>
             <thead>
               <tr>
                 <th>Agent</th>
@@ -189,75 +219,133 @@
             </thead>
             <tbody>
               <tr>
-                <td class="agent-claude">Claude Code</td>
+                <td class="agent-claude">
+                  <div class="agent-name">Claude Code</div>
+                  <div class="agent-model">opus-4-6</div>
+                </td>
                 <td>no hints</td>
                 <td class="metric-cell">
                   <span class="metric-value best">100%</span>
                   <div class="metric-bar bar-claude" style="width: calc(100% - 16px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">29%</span>
-                  <div class="metric-bar bar-claude" style="width: calc(29% - 5px)"></div>
+                  <span class="metric-value">38%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(38% - 6px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">29%</span>
-                  <div class="metric-bar bar-claude" style="width: calc(29% - 5px)"></div>
+                  <span class="metric-value">40%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(40% - 6px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">29%</span>
-                  <div class="metric-bar bar-claude" style="width: calc(29% - 5px)"></div>
+                  <span class="metric-value">33%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(33% - 5px)"></div>
                 </td>
               </tr>
               <tr>
-                <td class="agent-claude">Claude Code</td>
+                <td class="agent-claude">
+                  <div class="agent-name">Claude Code</div>
+                  <div class="agent-model">opus-4-6</div>
+                </td>
                 <td>with hints</td>
                 <td class="metric-cell">
                   <span class="metric-value best">100%</span>
                   <div class="metric-bar bar-claude" style="width: calc(100% - 16px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">34%</span>
-                  <div class="metric-bar bar-claude" style="width: calc(34% - 5px)"></div>
+                  <span class="metric-value">42%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(42% - 6px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">36%</span>
-                  <div class="metric-bar bar-claude" style="width: calc(36% - 6px)"></div>
+                  <span class="metric-value">43%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(43% - 6px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">27%</span>
-                  <div class="metric-bar bar-claude" style="width: calc(27% - 4px)"></div>
+                  <span class="metric-value">39%</span>
+                  <div class="metric-bar bar-claude" style="width: calc(39% - 6px)"></div>
                 </td>
               </tr>
               <tr>
-                <td class="agent-codex">Codex</td>
+                <td class="agent-opencode">
+                  <div class="agent-name">OpenCode</div>
+                  <div class="agent-model">gpt-5.4</div>
+                </td>
+                <td>no hints</td>
+                <td class="metric-cell">
+                  <span class="metric-value">90%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(90% - 14px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">73%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(73% - 11px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">74%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(74% - 11px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">50%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(50% - 8px)"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="agent-opencode">
+                  <div class="agent-name">OpenCode</div>
+                  <div class="agent-model">gpt-5.4</div>
+                </td>
+                <td>with hints</td>
+                <td class="metric-cell">
+                  <span class="metric-value">90%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(90% - 14px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">86%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(86% - 13px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">82%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(82% - 13px)"></div>
+                </td>
+                <td class="metric-cell">
+                  <span class="metric-value">56%</span>
+                  <div class="metric-bar bar-opencode" style="width: calc(56% - 8px)"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="agent-codex">
+                  <div class="agent-name">Codex</div>
+                  <div class="agent-model">gpt-5.4</div>
+                </td>
                 <td>no hints</td>
                 <td class="metric-cell">
                   <span class="metric-value">83%</span>
                   <div class="metric-bar bar-codex" style="width: calc(83% - 13px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">86%</span>
-                  <div class="metric-bar bar-codex" style="width: calc(86% - 14px)"></div>
+                  <span class="metric-value">92%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(92% - 15px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">78%</span>
-                  <div class="metric-bar bar-codex" style="width: calc(78% - 12px)"></div>
+                  <span class="metric-value">83%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(83% - 13px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value">46%</span>
-                  <div class="metric-bar bar-codex" style="width: calc(46% - 7px)"></div>
+                  <span class="metric-value">44%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(44% - 7px)"></div>
                 </td>
               </tr>
               <tr>
-                <td class="agent-codex">Codex</td>
+                <td class="agent-codex">
+                  <div class="agent-name">Codex</div>
+                  <div class="agent-model">gpt-5.4</div>
+                </td>
                 <td>with hints</td>
                 <td class="metric-cell">
                   <span class="metric-value">90%</span>
                   <div class="metric-bar bar-codex" style="width: calc(90% - 14px)"></div>
                 </td>
                 <td class="metric-cell">
-                  <span class="metric-value best">99%</span>
-                  <div class="metric-bar bar-codex" style="width: calc(99% - 16px)"></div>
+                  <span class="metric-value best">98%</span>
+                  <div class="metric-bar bar-codex" style="width: calc(98% - 16px)"></div>
                 </td>
                 <td class="metric-cell">
                   <span class="metric-value best">92%</span>
