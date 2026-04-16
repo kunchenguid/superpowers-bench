@@ -12,7 +12,7 @@
         --border: rgba(255, 255, 255, 0.08);
         --shadow: 0 28px 60px rgba(0, 0, 0, 0.4);
         --claude: #e07a3a;
-        --opencode: #60a5fa;
+        --claude47: #60a5fa;
         --codex: #34d399;
         --bar-bg: rgba(255, 255, 255, 0.06);
       }
@@ -180,8 +180,8 @@
         background: linear-gradient(0deg, var(--codex), color-mix(in srgb, var(--codex) 70%, white));
       }
 
-      .bar-fill.opencode {
-        background: linear-gradient(0deg, var(--opencode), color-mix(in srgb, var(--opencode) 70%, white));
+      .bar-fill.claude47 {
+        background: linear-gradient(0deg, var(--claude47), color-mix(in srgb, var(--claude47) 70%, white));
       }
 
       .bar-value {
@@ -249,22 +249,22 @@
 
           <div class="lane">
             <div class="lane-header">
-              <div class="lane-label" style="color: var(--opencode)">OpenCode</div>
-              <div class="lane-model">gpt-5.4</div>
+              <div class="lane-label" style="color: var(--claude47)">Claude Code</div>
+              <div class="lane-model">opus-4-7</div>
             </div>
             <div class="columns">
               <div class="column">
                 <div class="col-label">no hints</div>
                 <div class="bar-container">
-                  <div class="bar-fill opencode" style="height: 74%"></div>
-                  <div class="bar-value inside" style="color: var(--text)">74%</div>
+                  <div class="bar-fill claude47" style="height: 70%"></div>
+                  <div class="bar-value inside" style="color: var(--text)">70%</div>
                 </div>
               </div>
               <div class="column">
                 <div class="col-label">with hints</div>
                 <div class="bar-container">
-                  <div class="bar-fill opencode" style="height: 82%"></div>
-                  <div class="bar-value inside" style="color: var(--text)">82%</div>
+                  <div class="bar-fill claude47" style="height: 72%"></div>
+                  <div class="bar-value inside" style="color: var(--text)">72%</div>
                 </div>
               </div>
             </div>

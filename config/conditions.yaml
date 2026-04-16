@@ -11,6 +11,18 @@ conditions:
     model: claude-opus-4-6
     triggered: true
 
+  claude-opus-4-7:
+    name: "Claude Code Opus 4.7 baseline"
+    agent: claude
+    model: claude-opus-4-7
+    triggered: false
+
+  claude-opus-4-7-triggered:
+    name: "Claude Code Opus 4.7 with hints"
+    agent: claude
+    model: claude-opus-4-7
+    triggered: true
+
   codex:
     name: "Codex baseline"
     agent: codex

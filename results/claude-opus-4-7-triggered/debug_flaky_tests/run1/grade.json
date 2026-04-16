@@ -1,0 +1,17 @@
+{
+  "expected": [
+    "systematic-debugging"
+  ],
+  "detected": [
+    "systematic-debugging"
+  ],
+  "correct": [
+    "systematic-debugging"
+  ],
+  "missing": [],
+  "extra": [],
+  "precision": 1,
+  "recall": 1,
+  "f1": 1,
+  "pass": true
+}

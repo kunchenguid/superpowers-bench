@@ -1,0 +1,17 @@
+{
+  "expected": [
+    "dispatching-parallel-agents"
+  ],
+  "detected": [
+    "dispatching-parallel-agents"
+  ],
+  "correct": [
+    "dispatching-parallel-agents"
+  ],
+  "missing": [],
+  "extra": [],
+  "precision": 1,
+  "recall": 1,
+  "f1": 1,
+  "pass": true
+}

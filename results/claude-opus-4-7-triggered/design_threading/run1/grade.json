@@ -1,0 +1,20 @@
+{
+  "expected": [
+    "brainstorming",
+    "writing-plans"
+  ],
+  "detected": [
+    "brainstorming",
+    "writing-plans"
+  ],
+  "correct": [
+    "brainstorming",
+    "writing-plans"
+  ],
+  "missing": [],
+  "extra": [],
+  "precision": 1,
+  "recall": 1,
+  "f1": 1,
+  "pass": true
+}
